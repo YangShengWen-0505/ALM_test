@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心理測驗：你是哪種小動物？</title>
+    <style>
+        /* 網頁視覺與排版設計 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f8ff;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        /* 初始隱藏結果區塊 */
+        #result-section {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="quiz-section">
+            <h1>你是哪種小動物？</h1>
+            <img id="main-img" src="https://images.unsplash.com/photo-1544568100-847a948585b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="測驗封面">
+            
+            <h2 id="question-text">載入問題中...</h2>
+            <div id="options-container">
+                </div>
+        </div>
+
+        <div id="result-section">
+            <h2>測驗結果</h2>
+            <h1 id="result-title"></h1>
+            <img id="result-img" src="" alt="結果圖片">
+            <p id="result-desc"></p>
+            <button class="btn" onclick="location.reload()">再測一次</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. 定義問題與選項 ---
+        // 這裡設定兩道題目，選項會帶有不同的屬性值 (A 或 B)
+        const questions = [
+            {
+                question: "週末的下午，你通常傾向怎麼度過？",
+                options: [
+                    { text: "待在安靜的地方看書或寫程式", value: "A" },
+                    { text: "找朋友出門逛街或參加聚會", value: "B" }
+                ]
+            },
+            {
+                question: "遇到棘手的難題時，你的第一反應是？",
+                options: [
+                    { text: "先冷靜收集資料，分析最佳解", value: "A" },
+                    { text: "先動手嘗試，憑直覺邊做邊改", value: "B" }
+                ]
+            }
+        ];
+
+        // --- 2. 定義結果組合 ---
+        // 根據兩題的選擇組合 (AA, AB, BA, BB) 給予不同結果與圖片
+        const results = {
+            "AA": {
+                title: "智慧的貓頭鷹",
+                desc: "你思緒清晰、喜歡深思熟慮，做事非常有條理！",
+                img: "https://images.unsplash.com/photo-1543160824-78328dc8d88e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            },
+            "AB": {
+                title: "慵懶的貓咪",
+                desc: "你外表冷靜但內心充滿好奇，喜歡按照自己的步調生活。",
+                img: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            },
+            "BA": {
+                title: "機智的狐狸",
+                desc: "你既有活力又具備靈活的頭腦，能在團隊中輕易找到解決方案。",
+                img: "https://images.unsplash.com/photo-1516934024742-b461fba47600?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            },
+            "BB": {
+                title: "熱情的狗狗",
+                desc: "你充滿活力與熱情，喜歡與人互動，是身邊朋友的開心果！",
+                img: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            }
+        };
+
+        // --- 3. 測驗邏輯控制 ---
+        let currentQuestionIndex = 0;
+        let userAnswers = ""; // 用來記錄使用者的選擇 (例如 "AB")
+
+        const questionText = document.getElementById("question-text");
+        const optionsContainer = document.getElementById("options-container");
+        const quizSection = document.getElementById("quiz-section");
+        const resultSection = document.getElementById("result-section");
+
+        // 渲染題目
+        function renderQuestion() {
+            // 清空目前的選項
+            optionsContainer.innerHTML = "";
+            
+            // 取得目前的題目
+            const currentQ = questions[currentQuestionIndex];
+            questionText.innerText = currentQ.question;
+
+            // 建立選項按鈕
+            currentQ.options.forEach(option => {
+                const button = document.createElement("button");
+                button.className = "btn";
+                button.innerText = option.text;
+                button.onclick = () => handleAnswer(option.value);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        // 處理使用者答題
+        function handleAnswer(selectedValue) {
+            userAnswers += selectedValue; // 記錄選項 (如 A 或 B)
+            currentQuestionIndex++; // 前進到下一題
+
+            if (currentQuestionIndex < questions.length) {
+                renderQuestion(); // 還有題目就繼續顯示
+            } else {
+                showResult(); // 題目答完就顯示結果
+            }
+        }
+
+        // 顯示結果
+        function showResult() {
+            quizSection.style.display = "none"; // 隱藏測驗區
+            resultSection.style.display = "block"; // 顯示結果區
+
+            // 根據使用者的答案字串 (例如 "AA") 取得結果資料
+            const finalResult = results[userAnswers];
+
+            document.getElementById("result-title").innerText = finalResult.title;
+            document.getElementById("result-desc").innerText = finalResult.desc;
+            document.getElementById("result-img").src = finalResult.img;
+        }
+
+        // 網頁載入後立即執行第一題渲染
+        renderQuestion();
+    </script>
+</body>
+</html>
