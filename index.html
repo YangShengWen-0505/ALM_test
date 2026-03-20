@@ -3,180 +3,322 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>心理測驗：你是哪種小動物？</title>
+    <title>知識大挑戰 - ALM 測驗</title>
     <style>
-        /* 網頁視覺與排版設計 */
+        /* --- 1. 全域樣式與全螢幕背景圖 --- */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f8ff;
             color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
+            /* 背景圖設定：在此替換背景圖網址 */
+            background-image: url('https://images.unsplash.com/photo-1510936111840-65e151ad71bb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover; /* 覆蓋全螢幕 */
+            background-position: center; /* 居中 */
+            background-attachment: fixed; /* 背景固定，不隨捲動軸滾動 */
+            background-repeat: no-repeat;
         }
+
+        /* --- 2. 測驗容器設定 --- */
         .container {
-            background-color: #ffffff;
+            /* 加入半透明白色背景，確保文字清晰 */
+            background-color: rgba(255, 255, 255, 0.9);
             width: 90%;
-            max-width: 500px;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 600px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             text-align: center;
         }
-        img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        h1, h2 {
+
+        /* --- 3. 題目區塊樣式 --- */
+        #quiz-header h1 {
             color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2em;
         }
-        .btn {
+        #progress-text {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        #question-text {
+            font-size: 1.4em;
+            color: #34495e;
+            margin-bottom: 30px;
+            line-height: 1.4;
+        }
+
+        /* --- 4. 選項按鈕樣式 --- */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* 選項之間的間距 */
+        }
+        .btn-option {
             display: block;
             width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            background-color: #3498db;
+            padding: 18px;
+            background-color: #ffffff;
+            color: #3498db;
+            border: 2px solid #3498db;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left; /* 文字靠左，較像考卷 */
+            box-sizing: border-box; /* 確保 padding 不會撐破寬度 */
+        }
+        .btn-option:hover {
+            background-color: #e3f2fd;
+            transform: translateY(-2px); /* 懸停時微微浮起 */
+        }
+        .btn-option:active {
+            transform: translateY(1px);
+        }
+
+        /* --- 5. 結果區塊樣式 --- */
+        #result-section {
+            display: none; /* 初始隱藏 */
+        }
+        #result-status {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        #score-display {
+            font-size: 3em;
+            font-weight: bold;
+            color: #27ae60;
+            margin-bottom: 25px;
+        }
+        /* 結果圖片：放在最上方 */
+        #result-img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            margin-bottom: 25px;
+        }
+        /* 結果名字：圖片下方，較大字 */
+        #result-title {
+            font-size: 2.2em;
+            color: #2c3e50;
+            margin: 0 0 15px 0;
+        }
+        /* 結果說明：名字下方，較小字 */
+        #result-desc {
+            font-size: 1.1em;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            text-align: left; /* 說明文字較多，靠左較易閱讀 */
+        }
+
+        .btn-restart {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #e74c3c;
             color: white;
             border: none;
             border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
+            text-decoration: none;
             transition: background-color 0.3s;
         }
-        .btn:hover {
-            background-color: #2980b9;
+        .btn-restart:hover {
+            background-color: #c0392b;
         }
-        /* 初始隱藏結果區塊 */
-        #result-section {
-            display: none;
-        }
+
     </style>
 </head>
 <body>
 
     <div class="container">
         <div id="quiz-section">
-            <h1>你是哪種小動物？</h1>
-            <img id="main-img" src="https://images.unsplash.com/photo-1544568100-847a948585b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="測驗封面">
+            <div id="quiz-header">
+                <h1>知識大挑戰</h1>
+                <p id="progress-text"></p> </div>
             
-            <h2 id="question-text">載入問題中...</h2>
-            <div id="options-container">
-                </div>
+            <p id="question-text">載入問題中...</p>
+            
+            <div id="options-container" class="options-container">
+            </div>
         </div>
 
         <div id="result-section">
-            <h2>測驗結果</h2>
+            <p id="result-status">你的挑戰結果</p>
+            <div id="score-display"></div> <img id="result-img" src="" alt="結果圖片">
+            
             <h1 id="result-title"></h1>
-            <img id="result-img" src="" alt="結果圖片">
+            
             <p id="result-desc"></p>
-            <button class="btn" onclick="location.reload()">再測一次</button>
+            
+            <button class="btn-restart" onclick="location.reload()">再試一次</button>
         </div>
     </div>
 
     <script>
-        // --- 1. 定義問題與選項 ---
-        // 這裡設定兩道題目，選項會帶有不同的屬性值 (A 或 B)
-        const questions = [
+        // =========================================
+        // --- 設定區：你可以在這裡修改題目與結果 ---
+        // =========================================
+
+        // --- 1. 定義題目 (多個) ---
+        // answer 屬性請填寫選項的索引值 (0 代表第1個選項, 1 代表第2個, 依此類推)
+        const quizData = [
             {
-                question: "週末的下午，你通常傾向怎麼度過？",
-                options: [
-                    { text: "待在安靜的地方看書或寫程式", value: "A" },
-                    { text: "找朋友出門逛街或參加聚會", value: "B" }
-                ]
+                question: "GitHub Pages 預設會尋找哪個檔名作為首頁？",
+                options: ["home.html", "index.html", "main.html", "default.html"],
+                answer: 1 // 正確答案是 "index.html"
             },
             {
-                question: "遇到棘手的難題時，你的第一反應是？",
-                options: [
-                    { text: "先冷靜收集資料，分析最佳解", value: "A" },
-                    { text: "先動手嘗試，憑直覺邊做邊改", value: "B" }
-                ]
+                question: "在 Git 中，要將檔案存檔（提交）的指令是什麼？",
+                options: ["git push", "git pull", "git commit", "git add"],
+                answer: 2 // 正確答案是 "git commit"
+            },
+            {
+                question: "HTML 是什麼的縮寫？",
+                options: ["HyperText Markup Language", "HighText Machine Language", "Hyperlink and Text Manager", "Home Tool Markup Language"],
+                answer: 0
+            },
+            {
+                question: "在 CSS 中，用來設定背景圖片的屬性是？",
+                options: ["color", "image-src", "background-image", "picture"],
+                answer: 2
+            },
+            {
+                question: "JavaScript 是一種什麼類型的語言？",
+                options: ["程式語言 (Programming Language)", "標記語言 (Markup Language)", "樣式語言 (Style Language)", "資料庫語言 (Database Language)"],
+                answer: 0
             }
         ];
 
-        // --- 2. 定義結果組合 ---
-        // 根據兩題的選擇組合 (AA, AB, BA, BB) 給予不同結果與圖片
-        const results = {
-            "AA": {
-                title: "智慧的貓頭鷹",
-                desc: "你思緒清晰、喜歡深思熟慮，做事非常有條理！",
-                img: "https://images.unsplash.com/photo-1543160824-78328dc8d88e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+        // --- 2. 定義結果 (依據答對題數做選擇) ---
+        // 這裡的 key 必須覆蓋所有可能的答對題数 (從 0 到 題目總數)
+        // 為了展示多個結果，這裡範例設為 5 題。
+        const resultThresholds = {
+            "5": {
+                title: "ALM 絕對大師",
+                desc: "太強了！你完全掌握了 ALM 與網頁開發的基礎知識。你就是我們要找的人才！",
+                img: "https://images.unsplash.com/photo-1535303311164-664fc9ec6532?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" // 金牌
             },
-            "AB": {
-                title: "慵懶的貓咪",
-                desc: "你外表冷靜但內心充滿好奇，喜歡按照自己的步調生活。",
-                img: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            "4": {
+                title: "優秀的開發者",
+                desc: "非常棒！你對絕大多數的概念都很清晰，離大師只有一步之遙。",
+                img: "https://images.unsplash.com/photo-1576824227918-64bb7a3f5502?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" // 銀牌
             },
-            "BA": {
-                title: "機智的狐狸",
-                desc: "你既有活力又具備靈活的頭腦，能在團隊中輕易找到解決方案。",
-                img: "https://images.unsplash.com/photo-1516934024742-b461fba47600?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            "3": {
+                title: "潛力新星",
+                desc: "不錯喔！你已經具備了基本的概念，再多加練習就能更上一層樓。",
+                img: "https://images.unsplash.com/photo-1576824230191-b3b320d778d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" // 銅牌
             },
-            "BB": {
-                title: "熱情的狗狗",
-                desc: "你充滿活力與熱情，喜歡與人互動，是身邊朋友的開心果！",
-                img: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
+            "2": {
+                title: "繼續努力",
+                desc: "有些概念可能還不太熟悉，別灰心，多看幾次教學一定沒問題！",
+                img: "https://images.unsplash.com/photo-1590401825633-5c8310c1f544?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" // 書本與眼鏡
+            },
+            "1": {
+                title: "初學者",
+                desc: "剛開始接觸對吧？這是個很好的開始，試著去了解每個選項背後的含意吧。",
+                img: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" // 樂高積木
+            },
+            "0": {
+                title: "需要再加油",
+                desc: "似乎完全沒猜中呢。沒關係，再試一次，或者先回頭看看之前的教學。",
+                img: "https://images.unsplash.com/photo-1584824460031-bb69046c8e7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" // 錯誤訊號
             }
         };
 
-        // --- 3. 測驗邏輯控制 ---
-        let currentQuestionIndex = 0;
-        let userAnswers = ""; // 用來記錄使用者的選擇 (例如 "AB")
+        // =========================================
+        // --- 邏輯控制區 (非必要請勿修改) ---
+        // =========================================
 
-        const questionText = document.getElementById("question-text");
-        const optionsContainer = document.getElementById("options-container");
+        let currentQuestionIndex = 0; // 目前第幾題
+        let score = 0; // 答對題數
+
         const quizSection = document.getElementById("quiz-section");
         const resultSection = document.getElementById("result-section");
+        const progressText = document.getElementById("progress-text");
+        const questionText = document.getElementById("question-text");
+        const optionsContainer = document.getElementById("options-container");
 
-        // 渲染題目
-        function renderQuestion() {
-            // 清空目前的選項
+        // 渲染題目函數
+        function loadQuestion() {
+            // 1. 清空舊選項
             optionsContainer.innerHTML = "";
-            
-            // 取得目前的題目
-            const currentQ = questions[currentQuestionIndex];
-            questionText.innerText = currentQ.question;
 
-            // 建立選項按鈕
-            currentQ.options.forEach(option => {
+            // 2. 取得目前題目資料
+            const currentQuiz = quizData[currentQuestionIndex];
+
+            // 3. 更新進度文字與題目文字
+            progressText.innerText = `題目： ${currentQuestionIndex + 1} / ${quizData.length}`;
+            questionText.innerText = currentQuiz.question;
+
+            // 4. 動態生成選項按鈕
+            currentQuiz.options.forEach((option, index) => {
                 const button = document.createElement("button");
-                button.className = "btn";
-                button.innerText = option.text;
-                button.onclick = () => handleAnswer(option.value);
+                button.className = "btn-option";
+                button.innerText = option; // 純文字選項
+                // 點擊時傳送該選項的索引 (0, 1, 2, 3)
+                button.onclick = () => selectAnswer(index);
                 optionsContainer.appendChild(button);
             });
         }
 
-        // 處理使用者答題
-        function handleAnswer(selectedValue) {
-            userAnswers += selectedValue; // 記錄選項 (如 A 或 B)
-            currentQuestionIndex++; // 前進到下一題
+        // 處理答題函數
+        function selectAnswer(selectedIndex) {
+            const currentQuiz = quizData[currentQuestionIndex];
 
-            if (currentQuestionIndex < questions.length) {
-                renderQuestion(); // 還有題目就繼續顯示
+            // 判斷是否正確
+            if (selectedIndex === currentQuiz.answer) {
+                score++; // 答對了，加分
+            }
+
+            // 前進下一題
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < quizData.length) {
+                // 還有題目
+                loadQuestion();
             } else {
-                showResult(); // 題目答完就顯示結果
+                // 題目做完了，顯示結果
+                showResult();
             }
         }
 
-        // 顯示結果
+        // 顯示結果函數
         function showResult() {
-            quizSection.style.display = "none"; // 隱藏測驗區
-            resultSection.style.display = "block"; // 顯示結果區
+            // 1. 切換顯示區塊
+            quizSection.style.display = "none";
+            resultSection.style.display = "block";
 
-            // 根據使用者的答案字串 (例如 "AA") 取得結果資料
-            const finalResult = results[userAnswers];
+            // 2. 顯示答對題數
+            document.getElementById("score-display").innerText = `${score} / ${quizData.length}`;
 
-            document.getElementById("result-title").innerText = finalResult.title;
-            document.getElementById("result-desc").innerText = finalResult.desc;
-            document.getElementById("result-img").src = finalResult.img;
+            // 3. 根據答對題數 (score) 取得對應的結果資料
+            // 將數字轉為字串以匹配物件的 key
+            const finalResult = resultThresholds[score.toString()];
+
+            // 4. 填入結果內容
+            if (finalResult) {
+                document.getElementById("result-img").src = finalResult.img;
+                document.getElementById("result-title").innerText = finalResult.title;
+                document.getElementById("result-desc").innerText = finalResult.desc;
+            } else {
+                // 防錯機制：如果答對題數沒有對應的結果 (通常是題目數量改了但結果沒改到)
+                document.getElementById("result-title").innerText = "測驗完成！";
+                document.getElementById("result-desc").innerText = "恭喜你完成了所有題目，但我們似乎忘了幫你的分數準備結果說明...";
+            }
         }
 
-        // 網頁載入後立即執行第一題渲染
-        renderQuestion();
+        // 初始載入第一題
+        loadQuestion();
+
     </script>
 </body>
 </html>
