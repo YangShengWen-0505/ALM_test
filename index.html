@@ -8,7 +8,6 @@
         /* --- 1. 全域樣式與全螢幕背景圖 --- */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -22,37 +21,40 @@
             background-repeat: no-repeat;
         }
 
-        /* --- 2. 測驗容器設定 --- */
+        /* --- 2. 測驗容器設定 (已移除白色框框) --- */
         .container {
-            /* 加入半透明白色背景，確保文字清晰 */
-            background-color: rgba(255, 255, 255, 0.9);
+            background-color: transparent; /* 背景改為透明 */
+            box-shadow: none;              /* 移除陰影 */
             width: 90%;
             max-width: 600px;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 20px;
             text-align: center;
         }
 
-        /* --- 3. 題目區塊樣式 --- */
+        /* --- 3. 為了適應透明背景，加入全域文字白色與黑色發光陰影 --- */
+        #quiz-header h1, #progress-text, #question-text, 
+        #result-status, #result-title, #result-desc {
+            color: #ffffff;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8); /* 加上黑色陰影確保字體清晰 */
+        }
+
+        /* --- 4. 題目區塊樣式 --- */
         #quiz-header h1 {
-            color: #2c3e50;
-            margin-bottom: 30px;
-            font-size: 2em;
+            margin-bottom: 20px;
+            font-size: 2.5em;
         }
         #progress-text {
-            font-size: 0.9em;
-            color: #7f8c8d;
+            font-size: 1.1em;
             margin-bottom: 10px;
         }
         #question-text {
-            font-size: 1.4em;
-            color: #34495e;
+            font-size: 1.5em;
             margin-bottom: 30px;
-            line-height: 1.4;
+            line-height: 1.5;
+            font-weight: bold;
         }
 
-        /* --- 4. 選項按鈕樣式 --- */
+        /* --- 5. 選項按鈕樣式 --- */
         .options-container {
             display: flex;
             flex-direction: column;
@@ -62,9 +64,10 @@
             display: block;
             width: 100%;
             padding: 18px;
-            background-color: #ffffff;
-            color: #3498db;
-            border: 2px solid #3498db;
+            /* 按鈕保留一點點半透明白底，讓使用者知道可以點擊 */
+            background-color: rgba(255, 255, 255, 0.85); 
+            color: #2c3e50; /* 按鈕內的字維持深色 */
+            border: none;
             border-radius: 12px;
             font-size: 18px;
             font-weight: bold;
@@ -72,48 +75,47 @@
             transition: all 0.2s ease;
             text-align: left; /* 文字靠左，較像考卷 */
             box-sizing: border-box; /* 確保 padding 不會撐破寬度 */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
         .btn-option:hover {
-            background-color: #e3f2fd;
+            background-color: #ffffff;
             transform: translateY(-2px); /* 懸停時微微浮起 */
         }
         .btn-option:active {
             transform: translateY(1px);
         }
 
-        /* --- 5. 結果區塊樣式 --- */
+        /* --- 6. 結果區塊樣式 --- */
         #result-section {
             display: none; /* 初始隱藏 */
         }
         #result-status {
             font-size: 1.2em;
-            color: #7f8c8d;
             margin-bottom: 5px;
         }
         #score-display {
-            font-size: 3em;
+            font-size: 3.5em;
             font-weight: bold;
-            color: #27ae60;
+            color: #4cd137; /* 亮綠色分數 */
             margin-bottom: 25px;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);
         }
         /* 結果圖片：放在最上方 */
         #result-img {
             max-width: 100%;
             height: auto;
             border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.5); /* 圖片加上較深的陰影融入背景 */
             margin-bottom: 25px;
         }
         /* 結果名字：圖片下方，較大字 */
         #result-title {
             font-size: 2.2em;
-            color: #2c3e50;
             margin: 0 0 15px 0;
         }
         /* 結果說明：名字下方，較小字 */
         #result-desc {
-            font-size: 1.1em;
-            color: #555;
+            font-size: 1.2em;
             line-height: 1.6;
             margin-bottom: 30px;
             text-align: left; /* 說明文字較多，靠左較易閱讀 */
@@ -121,15 +123,17 @@
 
         .btn-restart {
             display: inline-block;
-            padding: 12px 30px;
+            padding: 15px 35px;
             background-color: #e74c3c;
             color: white;
             border: none;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
             text-decoration: none;
             transition: background-color 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
         }
         .btn-restart:hover {
             background-color: #c0392b;
@@ -174,12 +178,12 @@
             {
                 question: "GitHub Pages 預設會尋找哪個檔名作為首頁？",
                 options: ["home.html", "index.html", "main.html", "default.html"],
-                answer: 1 // 正確答案是 "index.html"
+                answer: 1 
             },
             {
                 question: "在 Git 中，要將檔案存檔（提交）的指令是什麼？",
                 options: ["git push", "git pull", "git commit", "git add"],
-                answer: 2 // 正確答案是 "git commit"
+                answer: 2 
             },
             {
                 question: "HTML 是什麼的縮寫？",
@@ -199,38 +203,36 @@
         ];
 
         // --- 2. 定義結果 (依據答對題數做選擇) ---
-        // 這裡的 key 必須覆蓋所有可能的答對題数 (從 0 到 題目總數)
-        // 為了展示多個結果，這裡範例設為 5 題。
         const resultThresholds = {
             "5": {
                 title: "ALM 絕對大師",
                 desc: "太強了！你完全掌握了 ALM 與網頁開發的基礎知識。你就是我們要找的人才！",
-                img: "https://images.unsplash.com/photo-1535303311164-664fc9ec6532?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" // 金牌
+                img: "https://images.unsplash.com/photo-1535303311164-664fc9ec6532?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
             },
             "4": {
                 title: "優秀的開發者",
                 desc: "非常棒！你對絕大多數的概念都很清晰，離大師只有一步之遙。",
-                img: "https://images.unsplash.com/photo-1576824227918-64bb7a3f5502?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" // 銀牌
+                img: "https://images.unsplash.com/photo-1576824227918-64bb7a3f5502?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
             },
             "3": {
                 title: "潛力新星",
                 desc: "不錯喔！你已經具備了基本的概念，再多加練習就能更上一層樓。",
-                img: "https://images.unsplash.com/photo-1576824230191-b3b320d778d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" // 銅牌
+                img: "https://images.unsplash.com/photo-1576824230191-b3b320d778d9?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
             },
             "2": {
                 title: "繼續努力",
                 desc: "有些概念可能還不太熟悉，別灰心，多看幾次教學一定沒問題！",
-                img: "https://images.unsplash.com/photo-1590401825633-5c8310c1f544?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" // 書本與眼鏡
+                img: "https://images.unsplash.com/photo-1590401825633-5c8310c1f544?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
             },
             "1": {
                 title: "初學者",
                 desc: "剛開始接觸對吧？這是個很好的開始，試著去了解每個選項背後的含意吧。",
-                img: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" // 樂高積木
+                img: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
             },
             "0": {
                 title: "需要再加油",
                 desc: "似乎完全沒猜中呢。沒關係，再試一次，或者先回頭看看之前的教學。",
-                img: "https://images.unsplash.com/photo-1584824460031-bb69046c8e7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" // 錯誤訊號
+                img: "https://images.unsplash.com/photo-1584824460031-bb69046c8e7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
             }
         };
 
@@ -238,8 +240,8 @@
         // --- 邏輯控制區 (非必要請勿修改) ---
         // =========================================
 
-        let currentQuestionIndex = 0; // 目前第幾題
-        let score = 0; // 答對題數
+        let currentQuestionIndex = 0; 
+        let score = 0; 
 
         const quizSection = document.getElementById("quiz-section");
         const resultSection = document.getElementById("result-section");
@@ -247,76 +249,55 @@
         const questionText = document.getElementById("question-text");
         const optionsContainer = document.getElementById("options-container");
 
-        // 渲染題目函數
         function loadQuestion() {
-            // 1. 清空舊選項
             optionsContainer.innerHTML = "";
-
-            // 2. 取得目前題目資料
             const currentQuiz = quizData[currentQuestionIndex];
 
-            // 3. 更新進度文字與題目文字
             progressText.innerText = `題目： ${currentQuestionIndex + 1} / ${quizData.length}`;
             questionText.innerText = currentQuiz.question;
 
-            // 4. 動態生成選項按鈕
             currentQuiz.options.forEach((option, index) => {
                 const button = document.createElement("button");
                 button.className = "btn-option";
-                button.innerText = option; // 純文字選項
-                // 點擊時傳送該選項的索引 (0, 1, 2, 3)
+                button.innerText = option; 
                 button.onclick = () => selectAnswer(index);
                 optionsContainer.appendChild(button);
             });
         }
 
-        // 處理答題函數
         function selectAnswer(selectedIndex) {
             const currentQuiz = quizData[currentQuestionIndex];
 
-            // 判斷是否正確
             if (selectedIndex === currentQuiz.answer) {
-                score++; // 答對了，加分
+                score++; 
             }
 
-            // 前進下一題
             currentQuestionIndex++;
 
             if (currentQuestionIndex < quizData.length) {
-                // 還有題目
                 loadQuestion();
             } else {
-                // 題目做完了，顯示結果
                 showResult();
             }
         }
 
-        // 顯示結果函數
         function showResult() {
-            // 1. 切換顯示區塊
             quizSection.style.display = "none";
             resultSection.style.display = "block";
-
-            // 2. 顯示答對題數
             document.getElementById("score-display").innerText = `${score} / ${quizData.length}`;
 
-            // 3. 根據答對題數 (score) 取得對應的結果資料
-            // 將數字轉為字串以匹配物件的 key
             const finalResult = resultThresholds[score.toString()];
 
-            // 4. 填入結果內容
             if (finalResult) {
                 document.getElementById("result-img").src = finalResult.img;
                 document.getElementById("result-title").innerText = finalResult.title;
                 document.getElementById("result-desc").innerText = finalResult.desc;
             } else {
-                // 防錯機制：如果答對題數沒有對應的結果 (通常是題目數量改了但結果沒改到)
                 document.getElementById("result-title").innerText = "測驗完成！";
                 document.getElementById("result-desc").innerText = "恭喜你完成了所有題目，但我們似乎忘了幫你的分數準備結果說明...";
             }
         }
 
-        // 初始載入第一題
         loadQuestion();
 
     </script>
