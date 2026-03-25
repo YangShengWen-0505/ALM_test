@@ -1,230 +1,49 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALM 測驗</title>
-    <style>
-        /* --- 1. 全域樣式與動態水流背景 --- */
-        body {
-            font-family: 'Noto Serif TC', 'PMingLiU', serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            overflow: hidden; /* 防止滾動條破壞氛圍 */
-            color: #ffffff;
-            /* 動態水流漸層 */
-            background: linear-gradient(180deg, #001219 0%, #003049 50%, #005f73 100%);
-            background-size: 400% 400%;
-            animation: waterFlow 15s ease infinite;
-        }
+<style>
+    /* ... 保留之前的樣式 ... */
 
-        /* 水流波光動畫 */
-        @keyframes waterFlow {
-            0% { background-position: 50% 0%; }
-            50% { background-position: 50% 100%; }
-            100% { background-position: 50% 0%; }
-        }
+    /* 新增：氣泡動畫樣式 */
+    .bubble {
+        position: absolute;
+        bottom: -20px;
+        background-color: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        animation: rise 10s infinite ease-in;
+        pointer-events: none;
+        z-index: 1;
+    }
 
-        /* 疊加一層淡淡的波紋感 */
-        body::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://www.transparenttextures.com/patterns/p6.png'); /* 細微紋理 */
-            opacity: 0.1;
-            pointer-events: none;
-        }
+    @keyframes rise {
+        0% { transform: translateY(0) translateX(0); opacity: 0; }
+        20% { opacity: 0.5; }
+        100% { transform: translateY(-100vh) translateX(20px); opacity: 0; }
+    }
+</style>
 
-        /* --- 2. 容器設定 --- */
-        .container {
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-            z-index: 10; /* 確保在背景之上 */
-        }
-
-        /* --- 3. 區塊顯示切換 --- */
-        #start-section, #quiz-section, #result-section {
-            display: none;
-            animation: fadeIn 0.8s ease;
-        }
-        #start-section.active, #quiz-section.active, #result-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* --- 4. 文字與按鈕樣式 --- */
-        h1 {
-            font-size: 2.5em;
-            letter-spacing: 5px;
-            text-shadow: 0 0 15px rgba(255,255,255,0.5);
-            margin-bottom: 10px;
-        }
-        .subtitle {
-            font-size: 1.1em;
-            color: rgba(255,255,255,0.7);
-            margin-bottom: 40px;
-            letter-spacing: 2px;
-        }
-
-        .btn-main {
-            background-color: transparent;
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.5);
-            padding: 15px 40px;
-            font-size: 18px;
-            cursor: pointer;
-            letter-spacing: 3px;
-            transition: all 0.3s;
-            backdrop-filter: blur(5px);
-            border-radius: 5px;
-        }
-        .btn-main:hover {
-            background-color: rgba(255,255,255,0.1);
-            border-color: #fff;
-            box-shadow: 0 0 20px rgba(255,255,255,0.2);
-        }
-
-        /* 選項按鈕特化 */
-        .options-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 30px;
-        }
-        .btn-option {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.3s;
-            text-align: left;
-        }
-        .btn-option:hover {
-            background-color: rgba(255, 255, 255, 0.15);
-            border-color: #fff;
-        }
-
-        /* 結果圖片樣式 */
-        #result-img {
-            width: 100%;
-            border-radius: 10px;
-            margin: 20px 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-    </style>
-</head>
 <body>
-
-    <div class="container">
-        <div id="start-section" class="active">
-            <h1>ALM測驗</h1>
-            <p class="subtitle">沉入思緒的深處，探索未知</p>
-            <button class="btn-main" onclick="startQuiz()">進入測驗</button>
-        </div>
-
-        <div id="quiz-section">
-            <p id="progress-text" style="font-size: 0.9em; opacity: 0.6;"></p>
-            <h2 id="question-text">載入中...</h2>
-            <div id="options-container" class="options-container"></div>
-        </div>
-
-        <div id="result-section">
-            <p>挑戰結果</p>
-            <div id="score-display" style="font-size: 2em; margin: 10px 0;"></div>
-            <img id="result-img" src="" alt="結果圖片">
-            <h2 id="result-title"></h2>
-            <p id="result-desc" style="line-height: 1.6; text-align: left;"></p>
-            <button class="btn-main" style="margin-top: 20px;" onclick="location.reload()">重新開始</button>
-        </div>
+    <div style="position: absolute; top: 30px; width: 100%; text-align: center; z-index: 20;">
+        <h1 style="font-size: 1.5em; opacity: 0.8;">ALM 測驗</h1>
     </div>
 
+    <div class="container">
+        </div>
+
     <script>
-        // 題目與結果設定
-        const quizData = [
-            {
-                question: "GitHub Pages 預設會尋找哪個檔名作為首頁？",
-                options: ["home.html", "index.html", "main.html", "default.html"],
-                answer: 1 
-            },
-            {
-                question: "在 Git 中，要將檔案存檔（提交）的指令是什麼？",
-                options: ["git push", "git pull", "git commit", "git add"],
-                answer: 2 
-            },
-            {
-                question: "HTML 是什麼的縮寫？",
-                options: ["HyperText Markup Language", "HighText Machine Language", "Hyperlink and Text Manager", "Home Tool Markup Language"],
-                answer: 0
-            }
-        ];
+        // ... 原本的 JS ...
 
-        const resultThresholds = {
-            "3": { title: "ALM 絕對大師", desc: "你對網頁開發有著深不可測的理解！", img: "https://images.unsplash.com/photo-1518152006812-edab29b069ac?q=80&w=600" },
-            "2": { title: "優秀的開發者", desc: "表現優異，距離巔峰只有一線之隔。", img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600" },
-            "1": { title: "潛力新星", desc: "你已經踏入了這個領域，繼續探索吧！", img: "https://images.unsplash.com/photo-1525333323552-4585e80798a7?q=80&w=600" },
-            "0": { title: "再接再厲", desc: "或許這次只是運氣不好，再試一次？", img: "https://images.unsplash.com/photo-1454117096348-e4abd6c4e58d?q=80&w=600" }
-        };
-
-        let currentQuestionIndex = 0;
-        let score = 0;
-
-        // [邏輯控制：開始測驗]
-        function startQuiz() {
-            document.getElementById("start-section").classList.remove("active");
-            document.getElementById("quiz-section").classList.add("active");
-            loadQuestion();
-        }
-
-        function loadQuestion() {
-            const optionsContainer = document.getElementById("options-container");
-            optionsContainer.innerHTML = "";
-            const currentQuiz = quizData[currentQuestionIndex];
-
-            document.getElementById("progress-text").innerText = `Step ${currentQuestionIndex + 1} / ${quizData.length}`;
-            document.getElementById("question-text").innerText = currentQuiz.question;
-
-            currentQuiz.options.forEach((option, index) => {
-                const button = document.createElement("button");
-                button.className = "btn-option";
-                button.innerText = option;
-                button.onclick = () => selectAnswer(index);
-                optionsContainer.appendChild(button);
-            });
-        }
-
-        function selectAnswer(selectedIndex) {
-            if (selectedIndex === quizData[currentQuestionIndex].answer) {
-                score++;
-            }
-            currentQuestionIndex++;
-            if (currentQuestionIndex < quizData.length) {
-                loadQuestion();
-            } else {
-                showResult();
+        // 新增：產生隨機氣泡的簡單指令
+        function createBubbles() {
+            for (let i = 0; i < 15; i++) {
+                let bubble = document.createElement("div");
+                bubble.className = "bubble";
+                let size = Math.random() * 15 + 5 + "px";
+                bubble.style.width = size;
+                bubble.style.height = size;
+                bubble.style.left = Math.random() * 100 + "vw";
+                bubble.style.animationDuration = Math.random() * 5 + 5 + "s";
+                bubble.style.animationDelay = Math.random() * 10 + "s";
+                document.body.appendChild(bubble);
             }
         }
-
-        function showResult() {
-            document.getElementById("quiz-section").classList.remove("active");
-            document.getElementById("result-section").classList.add("active");
-            document.getElementById("score-display").innerText = `${score} / ${quizData.length}`;
-
-            const finalResult = resultThresholds[score.toString()] || resultThresholds["0"];
-            document.getElementById("result-img").src = finalResult.img;
-            document.getElementById("result-title").innerText = finalResult.title;
-            document.getElementById("result-desc").innerText = finalResult.desc;
-        }
+        createBubbles();
     </script>
 </body>
-</html>
