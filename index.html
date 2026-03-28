@@ -7,37 +7,35 @@
     <style>
 /* --- 1. 全域樣式與梵谷星空流動背景 --- */
         body {
-            /* 使用優雅的明體/襯線字體，符合測驗氛圍 */
             font-family: 'Noto Serif TC', 'PMingLiU', serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
-            align-items: center;
             min-height: 100vh;
             margin: 0;
-            overflow: hidden; /* 隱藏滾動條，維持全螢幕沉浸感 */
-            color: #ffffff;
+            padding: 20px 0; /* 上下留白，避免內容貼齊邊緣 */
+            box-sizing: border-box; /* 確保 padding 不會撐破螢幕 */
             
-            /* 替換為梵谷的《隆河星夜》 (這裡先放高畫質網址，你也可以換成自己的檔名) */
+            /* 【關鍵修改】允許上下滾動，隱藏左右滾動，避免手機版內容被裁切 */
+            overflow-x: hidden; 
+            overflow-y: auto; 
+            
+            color: #ffffff;
             background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Starry_Night_Over_the_Rhone.jpg/1920px-Starry_Night_Over_the_Rhone.jpg');
             background-repeat: no-repeat;
-            
-            /* 流動特效核心：呼叫下方的 panBackground 動畫 */
+            background-position: center; /* 確保圖片從中央開始縮放 */
             animation: panBackground 30s ease-in-out infinite alternate;
         }
 
-        /* 讓靜態圖片產生「流動感」的動畫：緩慢平移與縮放 */
+        /* 讓靜態圖片產生「流動感」的動畫：稍微加大背景以適應手機直向螢幕 */
         @keyframes panBackground {
             0% { 
                 background-position: 0% 50%; 
-                background-size: 110%; 
-            }
-            50% { 
-                background-position: 100% 50%; 
-                background-size: 125%; 
+                background-size: cover; 
             }
             100% { 
-                background-position: 0% 50%; 
-                background-size: 110%; 
+                background-position: 100% 50%; 
+                background-size: 150%; 
             }
         }
 
@@ -46,15 +44,18 @@
             content: "";
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.65); /* 65% 透明度的深色濾鏡 */
-            backdrop-filter: blur(3px); /* 微微的毛玻璃模糊效果 */
-            z-index: -1; /* 確保遮罩在文字後方、圖片前方 */
+            background-color: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(3px);
+            z-index: -1;
         }
 
         /* --- 3. 測驗容器設定 --- */
         .container {
             width: 90%;
-            max-width: 500px;
+            max-width: 550px;
+            /* 【關鍵修改】用 margin: auto 配合 flexbox，確保內容過長時也能正確置中且不裁切頂部 */
+            margin: auto; 
+            padding: 20px;
             text-align: center;
             z-index: 10;
         }
@@ -78,7 +79,7 @@
             font-size: 2.5em;
             letter-spacing: 5px;
             text-shadow: 0 0 15px rgba(255,255,255,0.5);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             font-weight: normal;
         }
         h2 {
@@ -90,8 +91,10 @@
         .subtitle {
             font-size: 1.1em;
             color: rgba(255,255,255,0.8);
-            margin-bottom: 40px;
+            margin-bottom: 35px;
             letter-spacing: 2px;
+            line-height: 1.8;
+            text-align: justify; /* 讓長文案兩側對齊，看起來更整齊 */
         }
 
         /* --- 6. 封面與結果頁的主按鈕樣式 --- */
@@ -118,14 +121,14 @@
         .options-container {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-            margin-top: 30px;
+            gap: 12px;
+            margin-top: 25px;
         }
         .btn-option {
             background-color: rgba(255, 255, 255, 0.05);
             color: #fff;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 18px 20px;
+            padding: 16px 20px;
             border-radius: 8px;
             font-size: 16px;
             cursor: pointer;
@@ -134,16 +137,57 @@
             font-family: inherit;
             letter-spacing: 1px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            line-height: 1.4;
         }
         .btn-option:hover {
             background-color: rgba(255, 255, 255, 0.2);
             border-color: #fff;
-            transform: translateX(5px); /* 滑鼠游標移過去時，按鈕會微微向右滑動 */
+            transform: translateX(5px);
         }
 
         /* --- 8. 結果區塊特殊樣式 --- */
         #result-img {
             width: 100%;
+            max-height: 300px; /* 限制圖片最高高度，避免在手機上佔用太多空間 */
+            object-fit: cover; /* 確保圖片縮放比例正確 */
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+
+        /* =========================================================
+           9. 【關鍵】響應式設計 (RWD) - 專為手機與平板調整
+           ========================================================= */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%; /* 手機上讓容器寬一點，爭取更多文字空間 */
+                padding: 10px;
+            }
+            h1 {
+                font-size: 1.8em; /* 縮小大標題 */
+                letter-spacing: 3px;
+            }
+            h2 {
+                font-size: 1.25em; /* 縮小題目文字 */
+            }
+            .subtitle {
+                font-size: 0.95em; /* 縮小封面引言 */
+                margin-bottom: 25px;
+            }
+            .btn-main {
+                padding: 12px 30px;
+                font-size: 16px;
+            }
+            .btn-option {
+                padding: 14px 16px;
+                font-size: 15px; /* 手機上按鈕文字稍微縮小 */
+            }
+            #score-display {
+                font-size: 1.5em !important;
+            }
+        }
     </style>
 </head>
 <body>
