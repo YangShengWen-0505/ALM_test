@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ALM_Test</title>
     <style>
-/* --- 1. 全域樣式與梵谷星空流動背景 --- */
+        /* --- 1. 全域樣式與梵谷星空流動背景 --- */
         body {
             font-family: 'Noto Serif TC', 'PMingLiU', serif;
             display: flex;
@@ -13,21 +13,19 @@
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            padding: 20px 0; /* 上下留白，避免內容貼齊邊緣 */
-            box-sizing: border-box; /* 確保 padding 不會撐破螢幕 */
+            padding: 20px 0; 
+            box-sizing: border-box; 
             
-            /* 【關鍵修改】允許上下滾動，隱藏左右滾動，避免手機版內容被裁切 */
             overflow-x: hidden; 
             overflow-y: auto; 
             
             color: #ffffff;
             background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Starry_Night_Over_the_Rhone.jpg/1920px-Starry_Night_Over_the_Rhone.jpg');
             background-repeat: no-repeat;
-            background-position: center; /* 確保圖片從中央開始縮放 */
+            background-position: center; 
             animation: panBackground 30s ease-in-out infinite alternate;
         }
 
-        /* 讓靜態圖片產生「流動感」的動畫：稍微加大背景以適應手機直向螢幕 */
         @keyframes panBackground {
             0% { 
                 background-position: 0% 50%; 
@@ -53,7 +51,6 @@
         .container {
             width: 90%;
             max-width: 550px;
-            /* 【關鍵修改】用 margin: auto 配合 flexbox，確保內容過長時也能正確置中且不裁切頂部 */
             margin: auto; 
             padding: 20px;
             text-align: center;
@@ -94,7 +91,7 @@
             margin-bottom: 35px;
             letter-spacing: 2px;
             line-height: 1.8;
-            text-align: justify; /* 讓長文案兩側對齊，看起來更整齊 */
+            text-align: justify; 
         }
 
         /* --- 6. 封面與結果頁的主按鈕樣式 --- */
@@ -145,35 +142,23 @@
             transform: translateX(5px);
         }
 
-        /* --- 8. 結果區塊特殊樣式 --- */
-        #result-img {
-            width: 100%;
-            max-height: 300px; /* 限制圖片最高高度，避免在手機上佔用太多空間 */
-            object-fit: cover; /* 確保圖片縮放比例正確 */
-            border-radius: 10px;
-            margin: 20px 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-
         /* =========================================================
-           9. 【關鍵】響應式設計 (RWD) - 專為手機與平板調整
+           8. 【關鍵】響應式設計 (RWD) - 專為手機與平板調整
            ========================================================= */
         @media (max-width: 768px) {
             .container {
-                width: 95%; /* 手機上讓容器寬一點，爭取更多文字空間 */
+                width: 95%; 
                 padding: 10px;
             }
             h1 {
-                font-size: 1.8em; /* 縮小大標題 */
+                font-size: 1.8em; 
                 letter-spacing: 3px;
             }
             h2 {
-                font-size: 1.25em; /* 縮小題目文字 */
+                font-size: 1.25em; 
             }
             .subtitle {
-                font-size: 0.95em; /* 縮小封面引言 */
+                font-size: 0.95em; 
                 margin-bottom: 25px;
             }
             .btn-main {
@@ -182,7 +167,7 @@
             }
             .btn-option {
                 padding: 14px 16px;
-                font-size: 15px; /* 手機上按鈕文字稍微縮小 */
+                font-size: 15px; 
             }
             #score-display {
                 font-size: 1.5em !important;
@@ -209,7 +194,6 @@
         <div id="result-section">
             <p>挑戰結果</p>
             <div id="score-display" style="font-size: 2em; margin: 10px 0;"></div>
-            <img id="result-img" src="" alt="結果圖片">
             <h2 id="result-title"></h2>
             <p id="result-desc" style="line-height: 1.6; text-align: left;"></p>
             <button class="btn-main" style="margin-top: 20px;" onclick="location.reload()">重新開始</button>
@@ -246,7 +230,6 @@
         let currentQuestionIndex = 0;
         let score = 0;
 
-        // [邏輯控制：開始測驗]
         function startQuiz() {
             document.getElementById("start-section").classList.remove("active");
             document.getElementById("quiz-section").classList.add("active");
@@ -288,7 +271,8 @@
             document.getElementById("score-display").innerText = `${score} / ${quizData.length}`;
 
             const finalResult = resultThresholds[score.toString()] || resultThresholds["0"];
-            document.getElementById("result-img").src = finalResult.img;
+            
+            // 【已移除從 JavaScript 寫入圖片網址的代碼】
             document.getElementById("result-title").innerText = finalResult.title;
             document.getElementById("result-desc").innerText = finalResult.desc;
         }
