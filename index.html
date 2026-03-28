@@ -5,29 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ALM_Test</title>
     <style>
-/* --- 1. 全域樣式與梵谷星空流動背景 --- */
+/* --- 1. 全域樣式與梵谷星空流動背景 (針對 LINE 內建瀏覽器優化) --- */
         body {
             font-family: 'Noto Serif TC', 'PMingLiU', serif;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px 0; /* 上下留白，避免內容貼齊邊緣 */
-            box-sizing: border-box; /* 確保 padding 不會撐破螢幕 */
+            /* 移除原本的 justify-content: center，改用 margin: auto 達成安全置中 */
             
-            /* 【關鍵修改】允許上下滾動，隱藏左右滾動，避免手機版內容被裁切 */
+            min-height: 100vh; /* 給舊版瀏覽器的備用方案 */
+            min-height: 100dvh; /* 【關鍵優化】動態高度，自動扣除 LINE/FB 底部選單的高度 */
+            
+            margin: 0;
+            padding: 0; /* 將留白移到 container，避免 body 計算錯誤 */
+            box-sizing: border-box;
+            
+            /* 確保可以上下滑動，且在 iPhone 的 LINE 裡面滑動要順暢 */
             overflow-x: hidden; 
             overflow-y: auto; 
+            -webkit-overflow-scrolling: touch; /* 【關鍵優化】iOS 滑動順暢語法 */
             
             color: #ffffff;
             background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/Starry_Night_Over_the_Rhone.jpg/1920px-Starry_Night_Over_the_Rhone.jpg');
             background-repeat: no-repeat;
-            background-position: center; /* 確保圖片從中央開始縮放 */
+            background-position: center;
+            background-attachment: scroll; /* 在 LINE 裡面使用 fixed 容易破圖，改用 scroll 較安全 */
             animation: panBackground 30s ease-in-out infinite alternate;
         }
 
-        /* 讓靜態圖片產生「流動感」的動畫：稍微加大背景以適應手機直向螢幕 */
+        /* 讓靜態圖片產生「流動感」的動畫 */
         @keyframes panBackground {
             0% { 
                 background-position: 0% 50%; 
@@ -42,10 +47,11 @@
         /* --- 2. 黑色毛玻璃遮罩 (確保文字清晰) --- */
         body::before {
             content: "";
-            position: fixed;
+            position: fixed; /* 遮罩維持 fixed */
             top: 0; left: 0; width: 100%; height: 100%;
             background-color: rgba(0, 0, 0, 0.65);
             backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px); /* 支援 Safari 與 iOS LINE */
             z-index: -1;
         }
 
@@ -53,140 +59,12 @@
         .container {
             width: 90%;
             max-width: 550px;
-            /* 【關鍵修改】用 margin: auto 配合 flexbox，確保內容過長時也能正確置中且不裁切頂部 */
+            /* 【關鍵優化】利用 margin: auto 讓內容在可用空間內完美置中 */
             margin: auto; 
-            padding: 20px;
+            padding: 40px 15px; /* 上下多留一點空間，確保內容不會貼到 LINE 的頂部或底部 */
             text-align: center;
             z-index: 10;
-        }
-
-        /* --- 4. 區塊顯示切換與淡入動畫 --- */
-        #start-section, #quiz-section, #result-section {
-            display: none;
-            animation: fadeIn 0.8s ease;
-        }
-        #start-section.active, #quiz-section.active, #result-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* --- 5. 文字排版樣式 --- */
-        h1 {
-            font-size: 2.5em;
-            letter-spacing: 5px;
-            text-shadow: 0 0 15px rgba(255,255,255,0.5);
-            margin-bottom: 15px;
-            font-weight: normal;
-        }
-        h2 {
-            font-size: 1.5em;
-            line-height: 1.6;
-            letter-spacing: 2px;
-            font-weight: normal;
-        }
-        .subtitle {
-            font-size: 1.1em;
-            color: rgba(255,255,255,0.8);
-            margin-bottom: 35px;
-            letter-spacing: 2px;
-            line-height: 1.8;
-            text-align: justify; /* 讓長文案兩側對齊，看起來更整齊 */
-        }
-
-        /* --- 6. 封面與結果頁的主按鈕樣式 --- */
-        .btn-main {
-            background-color: transparent;
-            color: #fff;
-            border: 1px solid rgba(255,255,255,0.5);
-            padding: 15px 40px;
-            font-size: 18px;
-            cursor: pointer;
-            letter-spacing: 3px;
-            transition: all 0.4s ease;
-            backdrop-filter: blur(5px);
-            border-radius: 5px;
-            font-family: inherit;
-        }
-        .btn-main:hover {
-            background-color: rgba(255,255,255,0.15);
-            border-color: #fff;
-            box-shadow: 0 0 20px rgba(255,255,255,0.3);
-        }
-
-        /* --- 7. 測驗題目的選項按鈕樣式 --- */
-        .options-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 25px;
-        }
-        .btn-option {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 16px 20px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: left;
-            font-family: inherit;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            line-height: 1.4;
-        }
-        .btn-option:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-            border-color: #fff;
-            transform: translateX(5px);
-        }
-
-        /* --- 8. 結果區塊特殊樣式 --- */
-        #result-img {
-            width: 100%;
-            max-height: 300px; /* 限制圖片最高高度，避免在手機上佔用太多空間 */
-            object-fit: cover; /* 確保圖片縮放比例正確 */
-            border-radius: 10px;
-            margin: 20px 0;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-
-        /* =========================================================
-           9. 【關鍵】響應式設計 (RWD) - 專為手機與平板調整
-           ========================================================= */
-        @media (max-width: 768px) {
-            .container {
-                width: 95%; /* 手機上讓容器寬一點，爭取更多文字空間 */
-                padding: 10px;
-            }
-            h1 {
-                font-size: 1.8em; /* 縮小大標題 */
-                letter-spacing: 3px;
-            }
-            h2 {
-                font-size: 1.25em; /* 縮小題目文字 */
-            }
-            .subtitle {
-                font-size: 0.95em; /* 縮小封面引言 */
-                margin-bottom: 25px;
-            }
-            .btn-main {
-                padding: 12px 30px;
-                font-size: 16px;
-            }
-            .btn-option {
-                padding: 14px 16px;
-                font-size: 15px; /* 手機上按鈕文字稍微縮小 */
-            }
-            #score-display {
-                font-size: 1.5em !important;
-            }
+            position: relative; /* 確保在 LINE 的圖層運算正常 */
         }
     </style>
 </head>
@@ -231,7 +109,7 @@
             },
             {
                 question: "在這片海洋裡，航行者需要不同的準備與學習方式，例如了解航海知識、培養能力、參與團體活動，或進行深入探索。為了幫助航行者順利前行，學習旅程也會設計不同類型的活動與課程。在自主學習者模式的航行旅程中，下列哪一種「航行準備」與其對應的學習活動較為正確？",
-                options: ["(A) 專題研討向度：提供進入方案機會的團體建置活動", "(B) 深入研究向度：由教師為學生所規劃的區分性課程", "(C) 定向輔導向度：安排歷史博物館參訪並聆聽相關專題講座", "(D) 個別發展向度：與學生討論學習技巧並使用數位學習平臺","],
+                options: ["(A) 專題研討向度：提供進入方案機會的團體建置活動", "(B) 深入研究向度：由教師為學生所規劃的區分性課程", "(C) 定向輔導向度：安排歷史博物館參訪並聆聽相關專題講座", "(D) 個別發展向度：與學生討論學習技巧並使用數位學習平臺"],
                 answer: 3 
             }
         ];
