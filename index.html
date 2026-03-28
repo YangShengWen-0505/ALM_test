@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>知識大挑戰 - ALM 測驗</title>
     <style>
-        /* --- 1. 全域樣式與動態水流背景 --- */
+/* --- 1. 梵谷星空風 - 流動海洋背景 --- */
         body {
             font-family: 'Noto Serif TC', 'PMingLiU', serif;
             display: flex;
@@ -13,29 +13,71 @@
             align-items: center;
             min-height: 100vh;
             margin: 0;
-            overflow: hidden; /* 防止滾動條破壞氛圍 */
+            overflow: hidden; /* 防止旋渦破壞版面 */
             color: #ffffff;
-            /* 動態水流漸層 */
-            background: linear-gradient(180deg, #001219 0%, #003049 50%, #005f73 100%);
-            background-size: 400% 400%;
-            animation: waterFlow 15s ease infinite;
+            position: relative;
+            background-color: #001219; /* 基礎深海色 */
         }
 
-        /* 水流波光動畫 */
-        @keyframes waterFlow {
-            0% { background-position: 50% 0%; }
-            50% { background-position: 50% 100%; }
-            100% { background-position: 50% 0%; }
+        /* 背景特效層：負責生成梵谷風旋渦與流動 */
+        body::before {
+            content: "";
+            position: fixed;
+            /* 擴大邊界，確保旋轉动画時不會露出邊緣 */
+            top: -100%; left: -100%; width: 300%; height: 300%;
+            z-index: -1; /* 放在文字後方 */
+            
+            /* [重要] 這裡是用 CSS 模擬梵谷畫風的核心 */
+            background:
+                /* 1. 黃色/金色旋渦 (模擬星光反射) */
+                radial-gradient(circle at 30% 30%, rgba(238, 155, 0, 0.5) 0%, transparent 40%),
+                radial-gradient(circle at 70% 60%, rgba(202, 138, 4, 0.4) 0%, transparent 35%),
+                /* 2. 淺藍/綠色流動筆觸 */
+                conic-gradient(from 180deg at 50% 50%, 
+                    #001219 0%, 
+                    #005f73 15%, 
+                    #94d2bd 30%, 
+                    #0a9396 45%, 
+                    #003049 60%, 
+                    #001219 100%);
+            
+            /* 疊加模式，讓顏色像顏料一樣融合 */
+            background-blend-mode: color-dodge; 
+            
+            /* [重要] 濾鏡：模糊能讓漸層變成筆觸感，對比度能讓顏色更強烈 */
+            filter: blur(40px) contrast(120%); 
+            
+            /* 執行流動動畫 */
+            animation: vangoghFlow 40s linear infinite;
         }
 
-        /* 疊加一層淡淡的波紋感 */
+        /* 梵谷風 - 緩慢旋轉與漂移動畫 */
+        @keyframes vangoghFlow {
+            0% {
+                transform: rotate(0deg) scale(1);
+                background-position: 0% 0%;
+            }
+            50% {
+                /* 微微放大並旋轉，模擬流動 */
+                transform: rotate(2deg) scale(1.05);
+                background-position: 50% 50%;
+            }
+            100% {
+                transform: rotate(0deg) scale(1);
+                background-position: 0% 0%;
+            }
+        }
+
+        /* 疊加一層淡淡的畫布紋理，增加「畫」的質感 */
         body::after {
             content: "";
-            position: absolute;
+            position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://www.transparenttextures.com/patterns/p6.png'); /* 細微紋理 */
-            opacity: 0.1;
-            pointer-events: none;
+            /* 這裡使用一個免費的畫布紋理 */
+            background-image: url('https://www.transparenttextures.com/patterns/canvas-orange.png');
+            opacity: 0.15; /* 非常淡淡的 */
+            pointer-events: none; /* 不影響點擊 */
+            z-index: 0; /* 在特效層之上，內容層之下 */
         }
 
         /* --- 2. 容器設定 --- */
